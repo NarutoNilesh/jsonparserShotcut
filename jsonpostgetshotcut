@@ -1,0 +1,165 @@
+
+
+import UIKit
+
+typealias HttpAPICompletionHandler = (Bool,[String:Any],Error?) -> Void
+
+class HttpAsync: NSObject {
+    
+    func requestHttpwithDict(serviceURL:String, postData : String, completionHandler: @ escaping HttpAPICompletionHandler) -> Void {
+      
+        let request_url = URL(string: serviceURL)
+        
+        let request:NSMutableURLRequest = NSMutableURLRequest()
+        request .url=request_url
+        request .httpMethod="POST"
+        request .setValue("application/json", forHTTPHeaderField:"Content-Type")
+
+        request .setValue("application/x-www-form-urlencoded", forHTTPHeaderField:"Content-Type")
+        request .setValue("application/json", forHTTPHeaderField:"Accept")
+        let post = postData.data(using: String.Encoding(rawValue: String.Encoding.utf8.rawValue), allowLossyConversion: true)
+        request .httpBody=post
+        request.addValue("\(post!.count)", forHTTPHeaderField:"Content-Length")
+        
+        request .timeoutInterval=30
+        
+        let session = URLSession.shared
+        DLog(message: "************ API GET STARTED ************")
+        
+        let task = session.dataTask(with: request as URLRequest, completionHandler: {(data, response, error) -> Void in
+            if let data = data {
+                
+                let jsonString = NSString(data: data, encoding: String.Encoding.utf8.rawValue)
+                let responses = response as? HTTPURLResponse
+                
+                let JSONData = jsonString?.data(using: String.Encoding.utf8.rawValue)!
+                let jsonsData = try? JSONSerialization.jsonObject(with: JSONData!)
+                var responseDict = [String: Any]()
+                responseDict ["responseBody"] = jsonsData
+                responseDict ["statusCode"] = "\(responses?.statusCode)"
+                
+                if  jsonsData==nil {
+                    DLog(message:  "************ API GOT FAILED ************")
+                    completionHandler(false, responseDict, error)
+                }
+                else {
+                    DLog(message:  "************ API GOT SUCCESS ************")
+                    completionHandler(true, responseDict, error)
+                }
+            }
+        })
+        task.resume()
+    }
+    
+    
+    func requestHttpwithUrlGET(serviceURL:String, completionHandler:@ escaping HttpAPICompletionHandler) -> Void {
+        
+        let request_url = URL(string: serviceURL)
+        
+        let request:NSMutableURLRequest = NSMutableURLRequest()
+        request .url=request_url
+        request .httpMethod="GET"
+        request .setValue("application/x-www-form-urlencoded", forHTTPHeaderField:"Content-Type")
+        // request .setValue("application/json", forHTTPHeaderField:"Accept") // No need because its URL only no json
+        request .timeoutInterval=30
+        
+        let session = URLSession .shared
+        DLog(message:  "************ API GET STARTED ************")
+        
+        let task = session.dataTask(with: request as URLRequest, completionHandler: {(data, response, error) -> Void in
+            
+            DLog(message: error?.localizedDescription ?? "No Error")
+            if let data = data {
+                
+                let jsonString = NSString(data: data, encoding: String.Encoding.utf8.rawValue)
+                let responses = response as? HTTPURLResponse
+                
+                let JSONData = jsonString?.data(using: String.Encoding.utf8.rawValue)!
+                let jsonsData = try? JSONSerialization.jsonObject(with: JSONData!)
+                
+                var responseDict = [String: Any]()
+                responseDict ["responseBody"] = jsonsData
+                responseDict ["statusCode"] = String("\(responses?.statusCode)")
+                
+                if  jsonsData==nil {
+                    DLog(message: "************ API GOT FAILED ************")
+                    completionHandler(false, responseDict, error)
+                }
+                else {
+                    DLog(message: "************ API GOT SUCCESS ************")
+                    completionHandler(true, responseDict, error)
+                }
+            }
+        })
+        task.resume()
+    }
+    
+    func getPostString(params:[String:Any]) -> String {
+        var data = [String]()
+        for(key, value) in params {
+            data.append(key + "=\(value)")
+        }
+        return data.map { String($0) }.joined(separator: "&")
+    }
+}
+/*
+    constants.swift
+    
+    public let BASE_URL = "mainurlstring"
+    let sharedHttpInstance = HttpAsync()
+    func DLog(message: Any) {
+       let theFileName = (#file as NSString).lastPathComponent
+       print("[\(theFileName) Line:\(#line)] \(message)")
+    }
+    
+*\
+
+
+*\
+
+// calling function
+
+
+ func citylistAPI(){
+        print(#function)
+        let postData = "userid=\(userid)&usertype=\(usertype)"
+        print(postData)
+        sharedHttpInstance.requestHttpwithDict(serviceURL: URL_id, postData: postData, completionHandler: { (success, response, error) in
+            if success {
+                if let responseBody = response["responseBody"]
+                {
+                    print(responseBody)
+                    if let data = (responseBody as AnyObject).value(forKey: "records") as? NSArray
+                    {
+                        for dataVal in data
+                        {
+                            if let id = (dataVal as AnyObject).value(forKey: "id")
+                            {
+                                self.id.append("\(id)")
+                               print(self.id)
+                            }
+                         
+                        }
+                    }
+                    
+                    if let status = (responseBody as AnyObject).value(forKey: "status")
+                    {
+                        self.status1.append("\(status)")
+                    print(self.status1)
+                    }
+                
+                }
+                DispatchQueue.main.async {
+
+                }
+            }
+        })
+    }
+
+
+
+
+
+/*
+
+
