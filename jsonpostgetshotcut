@@ -120,7 +120,7 @@ class HttpAsync: NSObject {
 // calling function
 
 
- func citylistAPI(){
+ func listAPI(){
         print(#function)
         let postData = "userid=\(userid)&usertype=\(usertype)"
         print(postData)
@@ -197,6 +197,7 @@ let alertForm = UIAlertController(title: "alert", message: "message", preferredS
         }))
         self.present(alertForm, animated: true, completion: nil)
 //dynamic tblview
+// viewDidLayoutSubviews - calling func - dispathQueue 
    override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         DispatchQueue.main.async {
