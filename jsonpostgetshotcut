@@ -157,9 +157,53 @@ class HttpAsync: NSObject {
     }
 
 
-
-
-
 /*
+
+extra easy way to codeing some shotcuts : 
+
+Notes :
+
+//localdataSave
+  let defaults = UserDefaults.standard
+   defaults.set(self.FCMToken, forKey: "userid")
+        userID = (defaults.object(forKey: "userid") as? String)!
+// navigation
+ let vc = storyBoard.instantiateViewController(withIdentifier: "ViewController") as! ViewController
+        self.navigationController?.pushViewController(vc, animated: true)
+//back
+self.navigationController?.popViewController(animated: true)
+//cellforrow
+ let cell = tableView.dequeueReusableCell(withIdentifier: "cell1", for: indexPath) as! dynamicTablelist
+//cell button action
+ cell.viewwhistle.tag = indexPath.row
+            cell.viewwhistle.addTarget(self, action: #selector(viewdetails),for: UIControl.Event.touchUpInside)
+ @objc func viewdetails(sender : UIButton)
+    {
+ let indexPath = IndexPath(row: (sender as AnyObject).tag!, section: 0)
+        let cell = tableView.cellForRow(at: indexPath) as! ProfileCell
+// image
+pod 'SDWebImage'
+ cell.backimg.sd_setImage(with: URL(string: "\(backImageVal)"), placeholderImage: UIImage(named:"Preview"))
+}
+// toast
+pod 'Toast-Swift', '~> 5.0.1'
+var style = ToastStyle()
+ self.view.makeToast("\(self.Message)", duration: 1.0, position: .bottom, style: self.style)
+// alert
+let alertForm = UIAlertController(title: "alert", message: "message", preferredStyle: UIAlertController.Style.alert)
+        alertForm.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (action: UIAlertAction!) in
+        }))
+        alertForm.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (action: UIAlertAction!) in
+        }))
+        self.present(alertForm, animated: true, completion: nil)
+//dynamic tblview
+   override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        DispatchQueue.main.async {
+            self.firsttableheight.constant = self.tableview.contentSize.height
+            self.tableview.reloadData()
+            self.tableview.layoutIfNeeded()
+        }
+    }
 
 
