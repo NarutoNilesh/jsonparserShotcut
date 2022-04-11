@@ -206,5 +206,16 @@ let alertForm = UIAlertController(title: "alert", message: "message", preferredS
             self.tableview.layoutIfNeeded()
         }
     }
-
+//collectionview height set 
+// delegate - UICollectionViewDelegateFlowLayout
+func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        return 10
+    }
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        var scaleFactor = CGFloat()
+        var scaleHeight = CGFloat()
+            scaleFactor = collectionView.bounds.width/3.1
+                scaleHeight = 200
+        return CGSize(width:scaleFactor, height:scaleHeight)
+    }
 
